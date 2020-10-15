@@ -342,7 +342,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-09-05
+                    2020-10-15
                 </div>
                 
 
@@ -371,7 +371,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="mac清除对应端口占用方法"><a href="#mac清除对应端口占用方法" class="headerlink" title="mac清除对应端口占用方法"></a>mac清除对应端口占用方法</h3><pre><code class="bash">$ ps aux | grep xxx | awk &#39;&#123;print $2&#125;&#39; | uniq | xargs kill -9</code></pre>
+                <h3 id="mac清除对应端口占用方法"><a href="#mac清除对应端口占用方法" class="headerlink" title="mac清除对应端口占用方法"></a>mac清除对应端口占用方法</h3><pre class="line-numbers language-bash"><code class="language-bash">$ <span class="token function">ps</span> aux <span class="token operator">|</span> <span class="token function">grep</span> xxx <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&amp;#123;print <span class="token variable">$2</span>&amp;#125;'</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">xargs</span> <span class="token function">kill</span> -9<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
             </div>
             <hr/>
@@ -620,7 +620,11 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            这是你自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
+                            SET语法
+SET key value [EX second] [PX millisecond] [NX|XX]
+
+功能
+将字符串值value关联到key上如果key已经被关联有其他值，SET之后着会以新值覆盖旧值，并且无视类型当SET针对
                         
                     </div>
                     <div class="publish-info">
@@ -669,7 +673,8 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            这是你自定义的文章摘要内容，如果这个属性有值，文章卡片摘要就显示这段文字，否则程序会自动截取文章的部分内容作为摘要
+                            mac清除对应端口占用方法$ ps aux | grep xxx | awk '&amp;#123;print $2&amp;#125;' | uniq | xargs kill -9
+
                         
                     </div>
                     <div class="publish-info">
