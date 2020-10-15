@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="redis击杀之路01---字符串, 木子李">
+    <meta name="keywords" content="redis击杀之路02---哈希表, 木子李">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>redis击杀之路01---字符串 | 木子李</title>
+    <title>redis击杀之路02---哈希表 | 木子李</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -283,12 +283,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">redis击杀之路01---字符串</h1>
+                    <h1 class="description center-align post-title">redis击杀之路02---哈希表</h1>
                 </div>
             </div>
         </div>
@@ -335,7 +335,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-09-23
+                    2020-10-15
                 </div>
                 
 
@@ -349,14 +349,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.2k
+                    1.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    15 分
+                    9 分
                 </div>
                 
 
@@ -371,410 +371,272 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h1><h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>SET key value [EX second] [PX millisecond] [NX|XX]</p>
+                <h1 id="HSET"><a href="#HSET" class="headerlink" title="HSET"></a>HSET</h1><h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HSET hash field value</p>
 </blockquote>
 <h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>将字符串值value关联到key上<br>如果key已经被关联有其他值，SET之后着会以新值覆盖旧值，并且无视类型<br>当SET针对一个带有<a href="%E7%94%9F%E5%AD%98%E6%97%B6%E9%97%B4%E5%8D%B3%E4%B8%BATTL">^生存时间</a>的key进行设置的时候，该key原有的生存时间将被清除</p>
-</blockquote>
-<h2 id="可选参数"><a href="#可选参数" class="headerlink" title="可选参数"></a>可选参数</h2><ul>
-<li>EX second 将键的过期时间设置成second秒<ul>
-<li>SET key value Ex second &lt;==&gt; SETEX key second value</li>
-</ul>
-</li>
-<li>PX millisecond 将键的过期时间设置成millisecond毫秒<ul>
-<li>SET key value Px millisecond &lt;==&gt; PSETEX key millisecond value</li>
-</ul>
-</li>
-<li>NX 只在键不存在的时候才能设置成功<ul>
-<li>SET key value NX &lt;==&gt; SETNX key value</li>
-</ul>
-</li>
-<li>XX 只在键存在的时候才能操作</li>
-</ul>
-<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对不存在的键【key】设置"><a href="#对不存在的键【key】设置" class="headerlink" title="对不存在的键【key】设置"></a>对不存在的键【key】设置</h3><pre><code>127.0.0.1:6379&gt; exists key
-(integer) 0
-127.0.0.1:6379&gt; set key &quot;value&quot;
-OK
-127.0.0.1:6379&gt; get key
-&quot;value&quot;</code></pre>
-<h3 id="对已存在的键【key】设置"><a href="#对已存在的键【key】设置" class="headerlink" title="对已存在的键【key】设置"></a>对已存在的键【key】设置</h3><pre><code>127.0.0.1:6379&gt; exists key
-(integer) 1
-127.0.0.1:6379&gt; get key
-&quot;value&quot;
-127.0.0.1:6379&gt; set key &quot;new-value&quot;
-OK
-127.0.0.1:6379&gt; get key
-&quot;new-value&quot;</code></pre>
-<h3 id="EX设置过期时间-秒级"><a href="#EX设置过期时间-秒级" class="headerlink" title="EX设置过期时间(秒级)"></a>EX设置过期时间(秒级)</h3><pre><code>127.0.0.1:6379&gt; set key-with-expire-seconds-time &quot;value2&quot; EX 100
-OK
-127.0.0.1:6379&gt; get key-with-expire-seconds-time
-&quot;value2&quot;
-127.0.0.1:6379&gt; TTL key-with-expire-seconds-time
-(integer) 83</code></pre>
-<pre><code>127.0.0.1:6379&gt; setex key-with-expire-seconds-time 100 &quot;value3&quot;
-OK
-127.0.0.1:6379&gt; get key-with-expire-seconds-time
-&quot;value3&quot;
-127.0.0.1:6379&gt; TTL key-with-expire-seconds-time
-(integer) 76</code></pre>
-<h3 id="PX设置过期时间-毫秒级"><a href="#PX设置过期时间-毫秒级" class="headerlink" title="PX设置过期时间(毫秒级)"></a>PX设置过期时间(毫秒级)</h3><pre><code>127.0.0.1:6379&gt; set key-with=expire-millisecond-time &quot;value4&quot; PX 50000
-OK
-127.0.0.1:6379&gt; get key-with=expire-millisecond-time
-&quot;value4&quot;
-127.0.0.1:6379&gt; PTTL key-with=expire-millisecond-time
-(integer) 39598</code></pre>
-<pre><code>127.0.0.1:6379&gt; psetex key-with=expire-millisecond-time 50000 &quot;value4&quot;
-OK
-127.0.0.1:6379&gt; get key-with=expire-millisecond-time
-&quot;value4&quot;
-127.0.0.1:6379&gt; PTTL key-with=expire-millisecond-time
-(integer) 41905</code></pre>
-<h3 id="使用NX设置"><a href="#使用NX设置" class="headerlink" title="使用NX设置"></a>使用NX设置</h3><pre><code>127.0.0.1:6379&gt; exists unexists
-(integer) 0
-127.0.0.1:6379&gt; set unexists &quot;not exist&quot; NX
-OK
-127.0.0.1:6379&gt; get unexists
-&quot;not exist&quot;
-127.0.0.1:6379&gt; set existKey &quot;exist key&quot;
-OK
-127.0.0.1:6379&gt; exists existKey
-(integer) 1
-127.0.0.1:6379&gt; set existKey &quot;set exist key again&quot; NX
-(nil)
-127.0.0.1:6379&gt; get existKey
-&quot;exist key&quot;</code></pre>
-<pre><code>127.0.0.1:6379&gt; exists unexists
-(integer) 0
-127.0.0.1:6379&gt; setnx unexists &quot;not exist&quot;
-OK
-127.0.0.1:6379&gt; get unexists
-&quot;not exist&quot;
-127.0.0.1:6379&gt; set existKey &quot;exist key&quot;
-OK
-127.0.0.1:6379&gt; exists existKey
-(integer) 1
-127.0.0.1:6379&gt; setnx existKey &quot;set exist key again&quot;
-(nil)
-127.0.0.1:6379&gt; get existKey
-&quot;exist key&quot;</code></pre>
-<h3 id="使用XX设置"><a href="#使用XX设置" class="headerlink" title="使用XX设置"></a>使用XX设置</h3><pre><code>127.0.0.1:6379&gt; exists unexists
-(integer) 0
-127.0.0.1:6379&gt; set unexists &quot;unexist key&quot; XX
-(nil)
-127.0.0.1:6379&gt; get unexists
-(nil)
-127.0.0.1:6379&gt; set existKey &quot;exist key&quot;
-OK
-127.0.0.1:6379&gt; exists existKey
-(integer) 1
-127.0.0.1:6379&gt; set existKey &quot;set exist key again&quot; XX
-OK
-127.0.0.1:6379&gt; get existKey
-&quot;set exist key again&quot;</code></pre>
-<h1 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h1><h2 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>get key</p>
-</blockquote>
-<h2 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>获取键的值</p>
+<p>将哈希表hash中域field的值设置为value<br>如果哈希表hash不存在，将创建出新的hash并执行HSET操作<br>如果域field已存在，则新值会覆盖旧值</p>
 </blockquote>
 <h2 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>如果键不存在，则返回nil,否则返回键的值<br>如果获取到的键的值不是字符串类型，则会返回错误，get只会获取字符串类型的键值</p>
+<p>如果hash表中域field为新创建的，并成功设置value，则返回1<br>如果hash表中域field已存在，并成功用新值覆盖旧值，则返回0</p>
 </blockquote>
-<h2 id="代码演示-1"><a href="#代码演示-1" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对不存在的键进行获取"><a href="#对不存在的键进行获取" class="headerlink" title="对不存在的键进行获取"></a>对不存在的键进行获取</h3><pre><code>127.0.0.1:6379&gt; exists unexistKey
+<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对不存在的hash表进行操作"><a href="#对不存在的hash表进行操作" class="headerlink" title="对不存在的hash表进行操作"></a>对不存在的hash表进行操作</h3><pre><code>127.0.0.1:6379&gt; hexists student age
 (integer) 0
-127.0.0.1:6379&gt; get unexistKey
-(nil)</code></pre>
-<h3 id="对已存在的键进行获取"><a href="#对已存在的键进行获取" class="headerlink" title="对已存在的键进行获取"></a>对已存在的键进行获取</h3><pre><code>127.0.0.1:6379&gt; exists existKey
+127.0.0.1:6379&gt; hset student age 10
 (integer) 1
-127.0.0.1:6379&gt; get existKey
-&quot;value&quot;</code></pre>
-<h3 id="对类型非字符串的键进行获取"><a href="#对类型非字符串的键进行获取" class="headerlink" title="对类型非字符串的键进行获取"></a>对类型非字符串的键进行获取</h3><pre><code>127.0.0.1:6379&gt; LPUSH db value1 value2
-(integer) 2
-127.0.0.1:6379&gt; GET db
-(error) WRONGTYPE Operation against a key holding the wrong kind of value</code></pre>
-<h1 id="GETSET"><a href="#GETSET" class="headerlink" title="GETSET"></a>GETSET</h1><h2 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>GETSET key value</p>
+127.0.0.1:6379&gt; hget student age
+&quot;10&quot;</code></pre>
+<h3 id="对已存在的hash表进行操作"><a href="#对已存在的hash表进行操作" class="headerlink" title="对已存在的hash表进行操作"></a>对已存在的hash表进行操作</h3><pre><code>127.0.0.1:6379&gt; hexists student age
+(integer) 1
+127.0.0.1:6379&gt; hget student age
+&quot;10&quot;
+127.0.0.1:6379&gt; hset student age 20
+(integer) 0
+127.0.0.1:6379&gt; hget student age
+&quot;20&quot;</code></pre>
+<h1 id="HSETNX"><a href="#HSETNX" class="headerlink" title="HSETNX"></a>HSETNX</h1><h2 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HSETNX hash field value</p>
 </blockquote>
-<h2 id="功能-2"><a href="#功能-2" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>将键的值设置成value,并返回设置前的旧值</p>
+<h2 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>当且仅当field不存在于hash中时，才将field的值设置为value<br>如果field已存在于hash中，则赋值命令将被忽略<br>如果field不存在hash中，field的值被设置为value</p>
 </blockquote>
 <h2 id="返回值-1"><a href="#返回值-1" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>返回给定键的旧值<br>如果键不存在，则返回nil<br>当键存在，但是类型不是字符串的时候，则会返回一个错误</p>
+<p>执行成功时返回1<br>执行失败时返回0</p>
 </blockquote>
-<h2 id="代码演示-2"><a href="#代码演示-2" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="键存在"><a href="#键存在" class="headerlink" title="键存在"></a>键存在</h3><pre><code>127.0.0.1:6379&gt; set key &quot;value111&quot;
-OK
-127.0.0.1:6379&gt; getset key &quot;value222&quot;
-&quot;value111&quot;</code></pre>
-<h3 id="键不存在"><a href="#键不存在" class="headerlink" title="键不存在"></a>键不存在</h3><pre><code>127.0.0.1:6379&gt; exists key
+<h2 id="代码演示-1"><a href="#代码演示-1" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对field不存在时进行赋值"><a href="#对field不存在时进行赋值" class="headerlink" title="对field不存在时进行赋值"></a>对field不存在时进行赋值</h3><pre><code>127.0.0.1:6379&gt; hexists hash field 
 (integer) 0
-127.0.0.1:6379&gt; getset key &quot;value111&quot;
-(nil)</code></pre>
-<h3 id="键值类型不是字符串"><a href="#键值类型不是字符串" class="headerlink" title="键值类型不是字符串"></a>键值类型不是字符串</h3><pre><code>127.0.0.1:6379&gt; LPUSH db value1 value2
-(integer) 2
-127.0.0.1:6379&gt; getset db
-(error) ERR wrong number of arguments for &#39;getset&#39; command</code></pre>
-<h1 id="STRLEN"><a href="#STRLEN" class="headerlink" title="STRLEN"></a>STRLEN</h1><h2 id="语法-3"><a href="#语法-3" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>strlen key</p>
-</blockquote>
-<h2 id="功能-3"><a href="#功能-3" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>返回键存储字符串值的长度</p>
+127.0.0.1:6379&gt; hsetnx hash field 11
+(integer) 1
+127.0.0.1:6379&gt; hget hash field
+&quot;11&quot;</code></pre>
+<h3 id="对已存在的field进行赋值"><a href="#对已存在的field进行赋值" class="headerlink" title="对已存在的field进行赋值"></a>对已存在的field进行赋值</h3><pre><code>127.0.0.1:6379&gt; hexists hash field
+(integer) 1
+127.0.0.1:6379&gt; hget hash field
+&quot;11&quot;
+127.0.0.1:6379&gt; hsetnx hash field 20
+(integer) 0
+127.0.0.1:6379&gt; hget hash field
+&quot;11&quot;</code></pre>
+<h1 id="HGET"><a href="#HGET" class="headerlink" title="HGET"></a>HGET</h1><h2 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HGET hash field</p>
 </blockquote>
 <h2 id="返回值-2"><a href="#返回值-2" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>当键存在时，返回其键存储的字符串长度<br>当键不存在是，返回0<br>当获取到键的值不是字符串类型，则保错</p>
+<p>默认情况下返回给定域存储的值<br>如果域不存在，则返回nil</p>
 </blockquote>
-<h2 id="代码演示-3"><a href="#代码演示-3" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="键值存在"><a href="#键值存在" class="headerlink" title="键值存在"></a>键值存在</h3><pre><code>127.0.0.1:6379&gt; set len &quot;12345&quot;
-OK
-127.0.0.1:6379&gt; exists len
-(integer) 1
-127.0.0.1:6379&gt; strlen len
-(integer) 5</code></pre>
-<h3 id="键不存在-1"><a href="#键不存在-1" class="headerlink" title="键不存在"></a>键不存在</h3><pre><code>127.0.0.1:6379&gt; exists len2
+<h2 id="代码演示-2"><a href="#代码演示-2" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="域field不存在"><a href="#域field不存在" class="headerlink" title="域field不存在"></a>域field不存在</h3><pre><code>127.0.0.1:6379&gt; hexists hash2 field
 (integer) 0
-127.0.0.1:6379&gt; strlen len2
-(integer) 0</code></pre>
-<h3 id="键存储的不是字符串"><a href="#键存储的不是字符串" class="headerlink" title="键存储的不是字符串"></a>键存储的不是字符串</h3><pre><code>127.0.0.1:6379&gt;  LPUSH db value1 value2
-(integer) 2
-127.0.0.1:6379&gt; strlen db
-(error) WRONGTYPE Operation against a key holding the wrong kind of value</code></pre>
-<h1 id="APPEND"><a href="#APPEND" class="headerlink" title="APPEND"></a>APPEND</h1><h2 id="语法-4"><a href="#语法-4" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>APPEND key value</p>
-</blockquote>
-<h2 id="功能-4"><a href="#功能-4" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>将值设置到键保存的值之后，如果键不存在，则初始化key，并将value设置进去，相当于 set key value, 如果键值不是字符串类型，则返回错误</p>
+127.0.0.1:6379&gt; hget hash2 field
+(nil)</code></pre>
+<h3 id="域field存在"><a href="#域field存在" class="headerlink" title="域field存在"></a>域field存在</h3><pre><code>127.0.0.1:6379&gt; hset hash2 field 2
+(integer) 1
+127.0.0.1:6379&gt; hget hash2 field
+&quot;2&quot;</code></pre>
+<h1 id="HEXISTS"><a href="#HEXISTS" class="headerlink" title="HEXISTS"></a>HEXISTS</h1><h2 id="语法-3"><a href="#语法-3" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HEXISTS hash field</p>
 </blockquote>
 <h2 id="返回值-3"><a href="#返回值-3" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>追加value之后，值的总长度</p>
+<p>给定域存在的情况下返回1<br>不存在的情况下返回0</p>
 </blockquote>
-<h2 id="代码演示-4"><a href="#代码演示-4" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="key不存在"><a href="#key不存在" class="headerlink" title="key不存在"></a>key不存在</h3><pre><code>127.0.0.1:6379&gt; exists key3
+<h2 id="代码演示-3"><a href="#代码演示-3" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hexists hash3 field
 (integer) 0
-127.0.0.1:6379&gt; append key3 &quot;123&quot;
-(integer) 3
-127.0.0.1:6379&gt; get key3
-&quot;123&quot;</code></pre>
-<h3 id="key存在"><a href="#key存在" class="headerlink" title="key存在"></a>key存在</h3><pre><code>127.0.0.1:6379&gt; exists key3
+127.0.0.1:6379&gt; hset hash3 field 1
 (integer) 1
-127.0.0.1:6379&gt; append key3 &quot;456&quot;
-(integer) 6
-127.0.0.1:6379&gt; get key3
-&quot;123456&quot;</code></pre>
-<h3 id="key的值类型不是字符串"><a href="#key的值类型不是字符串" class="headerlink" title="key的值类型不是字符串"></a>key的值类型不是字符串</h3><pre><code>127.0.0.1:6379&gt; lpush key4 &quot;11&quot; &quot;22&quot; &quot;33&quot;
-(integer) 3
-127.0.0.1:6379&gt; append key4 &quot;44&quot;
-(error) WRONGTYPE Operation against a key holding the wrong kind of value</code></pre>
-<h1 id="SETRANGE"><a href="#SETRANGE" class="headerlink" title="SETRANGE"></a>SETRANGE</h1><h2 id="语法-5"><a href="#语法-5" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>SETRANGE key offset value</p>
+127.0.0.1:6379&gt; hexists hash3 field
+(integer) 1</code></pre>
+<h1 id="HDEL"><a href="#HDEL" class="headerlink" title="HDEL"></a>HDEL</h1><h2 id="语法-4"><a href="#语法-4" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HDEL hash field [field …]</p>
 </blockquote>
-<h2 id="功能-5"><a href="#功能-5" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>从偏移量offset开始，用value覆盖原key存储的value值<br>不存在的key则当作空字符串处理<br>SETRANGE会保证要被设置的key值有足够的长度够偏移量来设置新值，如果原字符串长度小于偏移量(比如原串长度为3，偏移量为4), 这种情况下，命令会自动在原串后用零字节(“\x00”)填充<br>因为redis限制字符串大小最大只有512mb， 所以offset最大值为2^29-1(536870911)，如果超过这个值，将无法设置</p>
+<h2 id="功能-2"><a href="#功能-2" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>删除一个域或者多个域,如果域不存在，则被忽略</p>
 </blockquote>
 <h2 id="返回值-4"><a href="#返回值-4" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>返回设置之后字符串的总长度</p>
+<p>被成功移除的数量，被忽略的不包含在内</p>
 </blockquote>
-<h2 id="代码演示-5"><a href="#代码演示-5" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对空字符串的设置"><a href="#对空字符串的设置" class="headerlink" title="对空字符串的设置"></a>对空字符串的设置</h3><pre><code>127.0.0.1:6379&gt; exists unexistKey
-(integer) 0
-127.0.0.1:6379&gt; setrange unexistKey 2 &quot;111&quot;
-(integer) 5
-127.0.0.1:6379&gt; get unexistKey
-&quot;\x00\x00111&quot;</code></pre>
-<h3 id="对非空字符串的设置"><a href="#对非空字符串的设置" class="headerlink" title="对非空字符串的设置"></a>对非空字符串的设置</h3><pre><code>127.0.0.1:6379&gt; set existKey &quot;abcde&quot;
-OK
-127.0.0.1:6379&gt; setrange existKey 1 &quot;f&quot;
-(integer) 5
-127.0.0.1:6379&gt; get existKey
-&quot;afcde&quot;</code></pre>
-<h1 id="GETRANGE"><a href="#GETRANGE" class="headerlink" title="GETRANGE"></a>GETRANGE</h1><h2 id="语法-6"><a href="#语法-6" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>GETRANGE key start end</p>
+<h2 id="代码演示-4"><a href="#代码演示-4" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hset hash field1 11 field2 22 field3 33
+(integer) 3
+127.0.0.1:6379&gt; hdel hash field2
+(integer) 1
+127.0.0.1:6379&gt; hget hash field2
+(nil)
+127.0.0.1:6379&gt; hdel hash field1 field3 field4
+(integer) 2
+127.0.0.1:6379&gt; hget hash field1
+(nil)
+127.0.0.1:6379&gt; hget hash field3
+(nil)</code></pre>
+<h1 id="HLEN"><a href="#HLEN" class="headerlink" title="HLEN"></a>HLEN</h1><h2 id="语法-5"><a href="#语法-5" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HLEN hash</p>
 </blockquote>
-<h2 id="功能-6"><a href="#功能-6" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>获取key值指定区域的值,[start, end]<br>负数的偏移量是从末尾开始计数的，比如-1为最后一位， -2为倒数第二位<br>GETRANGE保证区间不超过key值的最大值，超过的会被自动忽略</p>
+<h2 id="功能-3"><a href="#功能-3" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>返回hash的域的数量</p>
 </blockquote>
 <h2 id="返回值-5"><a href="#返回值-5" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>返回key值指定区域的值</p>
+<p>返回域的数量<br>hash不存在时返回0</p>
 </blockquote>
-<h2 id="代码演示-6"><a href="#代码演示-6" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; exists existKey
-(integer) 0
-127.0.0.1:6379&gt; getrange existKey 1 2
-&quot;&quot;
-127.0.0.1:6379&gt; set existKey &quot;12345&quot;
-OK
-127.0.0.1:6379&gt; getrange existKey 1 2
-&quot;23&quot;
-127.0.0.1:6379&gt; getrange existKey -1 -2  # 不允许逆向截取
-&quot;&quot;
-127.0.0.1:6379&gt; getrange existKey -2 -1
-&quot;45&quot;
-127.0.0.1:6379&gt; getrange existKey 1 10086
-&quot;2345&quot;</code></pre>
-<h1 id="INCR"><a href="#INCR" class="headerlink" title="INCR"></a>INCR</h1><h2 id="语法-7"><a href="#语法-7" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>INCR key</p>
+<h2 id="代码演示-5"><a href="#代码演示-5" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hset hash6 a1 11
+(integer) 1
+127.0.0.1:6379&gt; hset hash6 a2 22
+(integer) 1
+127.0.0.1:6379&gt; hlen hash6
+(integer) 2</code></pre>
+<h1 id="HSETLEN"><a href="#HSETLEN" class="headerlink" title="HSETLEN"></a>HSETLEN</h1><h2 id="语法-6"><a href="#语法-6" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HSTRLEN hash field</p>
 </blockquote>
-<h2 id="功能-7"><a href="#功能-7" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>为key存储的数字加1<br>如果key不存在，则先将key值初始化为0，再执行INCR操作<br>如果key存储的值不能转化为数字，则会返回一个错误<br>本操作限制在64位(bit)有符号数字范围内</p>
+<h2 id="功能-4"><a href="#功能-4" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>获取给定域field内存储的字符串value的长度</p>
+</blockquote>
+<h2 id="代码演示-6"><a href="#代码演示-6" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hset hash7 field aaaa
+(integer) 1
+127.0.0.1:6379&gt; hget hash7 field
+&quot;aaaa&quot;
+127.0.0.1:6379&gt; hstrlen hash7 field
+(integer) 4</code></pre>
+<h1 id="HINCRBY"><a href="#HINCRBY" class="headerlink" title="HINCRBY"></a>HINCRBY</h1><h2 id="语法-7"><a href="#语法-7" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HINCRBY hash field increment</p>
+</blockquote>
+<h2 id="功能-5"><a href="#功能-5" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>为hash表中域field内保存的值加上增量increment, increment可以为负数<br>如果hash表不存在，则初始化出hash表再执行hincrby操作<br>如果field不存在，则先初始化出field，并将value初始化为0，再进行hincrby操作<br>如果field存储的为字符串，则操作报错<br>本操作的值被限制在 64 位(bit)有符号数字表示之内</p>
 </blockquote>
 <h2 id="返回值-6"><a href="#返回值-6" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>返回加1操作之后的值</p>
+<p>进行增量后field内存储的值</p>
 </blockquote>
-<h2 id="代码演示-7"><a href="#代码演示-7" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="key不存在-1"><a href="#key不存在-1" class="headerlink" title="key不存在"></a>key不存在</h3><pre><code>127.0.0.1:6379&gt; exists existkey
+<h2 id="代码演示-7"><a href="#代码演示-7" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对不存在的field进行操作"><a href="#对不存在的field进行操作" class="headerlink" title="对不存在的field进行操作"></a>对不存在的field进行操作</h3><pre><code>127.0.0.1:6379&gt; hexists counter page
 (integer) 0
-127.0.0.1:6379&gt; incr existKey
-(integer) 1
-127.0.0.1:6379&gt; get existKey
-&quot;1&quot;</code></pre>
-<h3 id="key存在-1"><a href="#key存在-1" class="headerlink" title="key存在"></a>key存在</h3><pre><code>127.0.0.1:6379&gt; set existKey &quot;1&quot;
-OK
-127.0.0.1:6379&gt; exists existkey
-(integer) 1
-127.0.0.1:6379&gt; incr existKey
-(integer) 2
-127.0.0.1:6379&gt; get existKey
-&quot;2&quot;</code></pre>
-<h3 id="key存储的字符串无法转化为数字"><a href="#key存储的字符串无法转化为数字" class="headerlink" title="key存储的字符串无法转化为数字"></a>key存储的字符串无法转化为数字</h3><pre><code>127.0.0.1:6379&gt; set existKey &quot;abc&quot;
-OK
-127.0.0.1:6379&gt; incr existKey
-(error) ERR value is not an integer or out of range</code></pre>
-<h1 id="INCRBY"><a href="#INCRBY" class="headerlink" title="INCRBY"></a>INCRBY</h1><h2 id="语法-8"><a href="#语法-8" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>INCRBY key icrement</p>
+127.0.0.1:6379&gt; hincrby counter page 10
+(integer) 10
+127.0.0.1:6379&gt; hget counter page
+&quot;10&quot;</code></pre>
+<h3 id="对已存在的field进行操作"><a href="#对已存在的field进行操作" class="headerlink" title="对已存在的field进行操作"></a>对已存在的field进行操作</h3><pre><code>127.0.0.1:6379&gt; hget counter page
+&quot;10&quot;
+127.0.0.1:6379&gt; hincrby counter page 20
+(integer) 30
+127.0.0.1:6379&gt; hget counter page
+&quot;30&quot;</code></pre>
+<h3 id="对存储为字符串的field进行操作"><a href="#对存储为字符串的field进行操作" class="headerlink" title="对存储为字符串的field进行操作"></a>对存储为字符串的field进行操作</h3><pre><code>127.0.0.1:6379&gt; hget counter page2
+&quot;asasas&quot;
+127.0.0.1:6379&gt; hincrby counter page2 11
+(error) ERR hash value is not an integer</code></pre>
+<h1 id="HINCRBYFLOAT"><a href="#HINCRBYFLOAT" class="headerlink" title="HINCRBYFLOAT"></a>HINCRBYFLOAT</h1><h2 id="语法-8"><a href="#语法-8" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HINCRBYFLOAT hash field increment</p>
 </blockquote>
-<h2 id="功能-8"><a href="#功能-8" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>为key存储的数字加上增量incrment<br>key不存在时，则先初始化出key的值为0，在执行INCRBY操作<br>如果key存储的值不能转化为数字，则会返回一个错误<br>本操作限制在64位(bit)有符号数字范围内</p>
+<h2 id="功能-6"><a href="#功能-6" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>为hash表中域field内保存的值加上增量increment, increment可以为负数<br>如果hash表不存在，则初始化出hash表再执行hincrby操作<br>如果field不存在，则先初始化出field，并将value初始化为0，再进行hincrby操作<br>当域field存储的value不是字符串类型，会返回错误<br>当域field存储的value或增量increment不能被解释为双精度浮点数时报错</p>
 </blockquote>
 <h2 id="返回值-7"><a href="#返回值-7" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>在加上增量increment后，返回最新的key值</p>
+<p>执行增量操作后域field内存储的value值</p>
 </blockquote>
-<h2 id="代码演示-8"><a href="#代码演示-8" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="key不存在-2"><a href="#key不存在-2" class="headerlink" title="key不存在"></a>key不存在</h3><pre><code>127.0.0.1:6379&gt; exists existKey
+<h2 id="代码演示-8"><a href="#代码演示-8" class="headerlink" title="代码演示"></a>代码演示</h2><h3 id="对不存在的field执行操作"><a href="#对不存在的field执行操作" class="headerlink" title="对不存在的field执行操作"></a>对不存在的field执行操作</h3><pre><code>127.0.0.1:6379&gt; hexists num float1
 (integer) 0
-127.0.0.1:6379&gt; incrby existKey 100
-(integer) 100
-127.0.0.1:6379&gt; get existKey
-&quot;100&quot;</code></pre>
-<h3 id="key存在-2"><a href="#key存在-2" class="headerlink" title="key存在"></a>key存在</h3><pre><code>127.0.0.1:6379&gt; exists existKey
+127.0.0.1:6379&gt; hincrbyfloat num float1 10.0
+&quot;10&quot;
+127.0.0.1:6379&gt; hget num float1
+&quot;10&quot;</code></pre>
+<h3 id="两个普通的双精度操作"><a href="#两个普通的双精度操作" class="headerlink" title="两个普通的双精度操作"></a>两个普通的双精度操作</h3><pre><code>127.0.0.1:6379&gt; hset num float2 10.0
 (integer) 1
-127.0.0.1:6379&gt; get existKey
-&quot;100&quot;
-127.0.0.1:6379&gt; incrby existKey 100
-(integer) 200
-127.0.0.1:6379&gt; get existKey
-&quot;200&quot;</code></pre>
-<h1 id="INCRBYFLOAT"><a href="#INCRBYFLOAT" class="headerlink" title="INCRBYFLOAT"></a>INCRBYFLOAT</h1><h2 id="语法-9"><a href="#语法-9" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>INCRBYFLOAT key increment</p>
+127.0.0.1:6379&gt; hincrbyfloat num float2 12.0
+&quot;22&quot;
+127.0.0.1:6379&gt; hget num float2
+&quot;22&quot;</code></pre>
+<h3 id="两个指数类型数据操作"><a href="#两个指数类型数据操作" class="headerlink" title="两个指数类型数据操作"></a>两个指数类型数据操作</h3><pre><code>127.0.0.1:6379&gt; hset num float3 2e3
+(integer) 1
+127.0.0.1:6379&gt; hincrbyfloat num float3 5e2
+&quot;2500&quot;
+127.0.0.1:6379&gt; hget num float3
+&quot;2500&quot;</code></pre>
+<h1 id="HMSET"><a href="#HMSET" class="headerlink" title="HMSET"></a>HMSET</h1><h2 id="语法-9"><a href="#语法-9" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HMSET hash field value [field value …]</p>
 </blockquote>
-<h2 id="功能-9"><a href="#功能-9" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>对key值加上浮点数增量increment<br>key不存在，则先将key值初始化为0,再进行操作<br>key值或者increment都可以使用指数形式(1.0e2 ==&gt; 100)<br>该操作最多保留小数点后17位<br>当key值不能被解析成双精度浮点数时，会返回一个错误</p>
+<h2 id="功能-7"><a href="#功能-7" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>同时设置多个域field</p>
 </blockquote>
 <h2 id="返回值-8"><a href="#返回值-8" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>加上增量increment后，返回最新key的值</p>
+<p>设置成功，返回ok<br>如果设置不是hash表类型，报错</p>
 </blockquote>
-<h2 id="代码示范"><a href="#代码示范" class="headerlink" title="代码示范"></a>代码示范</h2><h3 id="key不存在-3"><a href="#key不存在-3" class="headerlink" title="key不存在"></a>key不存在</h3><pre><code>127.0.0.1:6379&gt; exists decimal
-(integer) 0
-127.0.0.1:6379&gt; incrbyfloat decimal &quot;2.0&quot;
-&quot;2&quot;
-127.0.0.1:6379&gt; get decimal
-&quot;2&quot;</code></pre>
-<h3 id="key存在-3"><a href="#key存在-3" class="headerlink" title="key存在"></a>key存在</h3><pre><code>127.0.0.1:6379&gt; get decimal
-&quot;2&quot;
-127.0.0.1:6379&gt; incrbyfloat decimal &quot;10.5&quot;
-&quot;12.5&quot;
-127.0.0.1:6379&gt; get decimal
-&quot;12.5&quot;</code></pre>
-<h1 id="DECR"><a href="#DECR" class="headerlink" title="DECR"></a>DECR</h1><h2 id="语法-10"><a href="#语法-10" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>DECR key</p>
+<h2 id="代码演示-9"><a href="#代码演示-9" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hmset website baidu baidu.com qq qq.com yahoo yahoo.com
+OK
+127.0.0.1:6379&gt; hgetall website
+1) &quot;baidu&quot;
+2) &quot;baidu.com&quot;
+3) &quot;qq&quot;
+4) &quot;qq.com&quot;
+5) &quot;yahoo&quot;
+6) &quot;yahoo.com&quot;</code></pre>
+<h1 id="HMGET"><a href="#HMGET" class="headerlink" title="HMGET"></a>HMGET</h1><h2 id="语法-10"><a href="#语法-10" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HMGET hash field [field …]</p>
 </blockquote>
-<h2 id="功能-10"><a href="#功能-10" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>为key存储的数字减1<br>key不存在时，则先初始化出key的值为0，在执行DECR操作<br>如果key存储的值不能转化为数字，则会返回一个错误<br>本操作限制在64位(bit)有符号数字范围内</p>
+<h2 id="功能-8"><a href="#功能-8" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>同时获取到多个域field存储的值</p>
 </blockquote>
 <h2 id="返回值-9"><a href="#返回值-9" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>减1之后，返回最新的key的值</p>
+<p>一个包含多个给定域的关联值的表，表值的排列顺序和给定域参数的请求顺序一样</p>
 </blockquote>
-<h2 id="代码演示-9"><a href="#代码演示-9" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; exists existKey
-(integer) 0
-127.0.0.1:6379&gt; decr existKey
-(integer) -1
-127.0.0.1:6379&gt; get existKey
-&quot;-1&quot;
-127.0.0.1:6379&gt; exists existKey
-(integer) 1
-127.0.0.1:6379&gt; decr existKey
-(integer) -2
-127.0.0.1:6379&gt; get existKey
-&quot;-2&quot;</code></pre>
-<h1 id="DECRBY"><a href="#DECRBY" class="headerlink" title="DECRBY"></a>DECRBY</h1><h2 id="语法-11"><a href="#语法-11" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>DECRBY key decrement</p>
+<h2 id="代码演示-10"><a href="#代码演示-10" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hmset website baidu baidu.com qq qq.com yahoo yahoo.com
+OK
+127.0.0.1:6379&gt; hmget website baidu qq yahoo xx
+1) &quot;baidu.com&quot;
+2) &quot;qq.com&quot;
+3) &quot;yahoo.com&quot;
+4) (nil)</code></pre>
+<h1 id="HKEYS"><a href="#HKEYS" class="headerlink" title="HKEYS"></a>HKEYS</h1><h2 id="语法-11"><a href="#语法-11" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HKEYS hash</p>
 </blockquote>
-<h2 id="功能-11"><a href="#功能-11" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>为key存储的数字减去减量decrement<br>key不存在时，则先初始化出key的值为0，在执行DECRBY操作<br>如果key存储的值不能转化为数字，则会返回一个错误<br>本操作限制在64位(bit)有符号数字范围内</p>
+<h2 id="功能-9"><a href="#功能-9" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>返回hash表中所有的域</p>
 </blockquote>
 <h2 id="返回值-10"><a href="#返回值-10" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>返回键在执行减法操作之后的值</p>
+<p>一个包含hash表中所有域的表<br>当hash表不存在时，则返回一个空表</p>
 </blockquote>
-<h2 id="代码演示-10"><a href="#代码演示-10" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; exists existKey
+<h2 id="代码演示-11"><a href="#代码演示-11" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hmset website baidu baidu.com qq qq.com yahoo yahoo.com
+OK
+127.0.0.1:6379&gt; hkeys website
+1) &quot;baidu&quot;
+2) &quot;qq&quot;
+3) &quot;yahoo&quot;
+127.0.0.1:6379&gt; exists website1
 (integer) 0
-127.0.0.1:6379&gt; decrby existKey 100
-(integer) -100
-127.0.0.1:6379&gt; get existKey
-&quot;-100&quot;
-127.0.0.1:6379&gt; decrby existKey 48
-(integer) -148
-127.0.0.1:6379&gt; get existKey
-&quot;-148&quot;</code></pre>
-<h1 id="MSET"><a href="#MSET" class="headerlink" title="MSET"></a>MSET</h1><h2 id="语法-12"><a href="#语法-12" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>MSET key value [key value …]</p>
+127.0.0.1:6379&gt; hkeys website1
+(empty list or set)</code></pre>
+<h1 id="HVALS"><a href="#HVALS" class="headerlink" title="HVALS"></a>HVALS</h1><h2 id="语法-12"><a href="#语法-12" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HVALS hash</p>
 </blockquote>
-<h2 id="功能-12"><a href="#功能-12" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>同时为多个键设置值<br>如果其中的某些键已存在，则会覆盖原有的值<br>MSET是个原子操作，所以不会出现一些值设置成功了，一些是设置失败的情况  </p>
+<h2 id="功能-10"><a href="#功能-10" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>返回hash表中所有域的值</p>
 </blockquote>
 <h2 id="返回值-11"><a href="#返回值-11" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>总是返回OK</p>
+<p>一个包含hash表中所有值的表<br>当hash表不存在时，返回一个空表</p>
 </blockquote>
-<h2 id="代码演示-11"><a href="#代码演示-11" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; mset key1 &quot;value1&quot; key2 &quot;value2&quot;
+<h2 id="代码演示-12"><a href="#代码演示-12" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hmset website baidu baidu.com qq qq.com yahoo yahoo.com
 OK
-127.0.0.1:6379&gt; mget key1 key2
-1) &quot;value1&quot;
-2) &quot;value2&quot;
-127.0.0.1:6379&gt; mset key1 &quot;value11&quot; key3 &quot;value3&quot;
-OK
-127.0.0.1:6379&gt; mget key1 key2 key3
-1) &quot;value11&quot;
-2) &quot;value2&quot;
-3) &quot;value3&quot;</code></pre>
-<h1 id="MSETNX"><a href="#MSETNX" class="headerlink" title="MSETNX"></a>MSETNX</h1><h1 id="语法-13"><a href="#语法-13" class="headerlink" title="语法"></a>语法</h1><blockquote>
-<p>MSETNX key value [key value …]</p>
+127.0.0.1:6379&gt; hvals website
+1) &quot;baidu.com&quot;
+2) &quot;qq.com&quot;
+3) &quot;yahoo.com&quot;
+127.0.0.1:6379&gt; exists website1
+(integer) 0
+127.0.0.1:6379&gt; hvals website1
+(empty list or set)</code></pre>
+<h1 id="HGETALL"><a href="#HGETALL" class="headerlink" title="HGETALL"></a>HGETALL</h1><h2 id="语法-13"><a href="#语法-13" class="headerlink" title="语法"></a>语法</h2><blockquote>
+<p>HGETALL hash</p>
 </blockquote>
-<h2 id="功能-13"><a href="#功能-13" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>当且仅当所有key不存在时，同时为多个键设置值<br>如果有一个key是存在的，则当前操作失败<br>MSETNX为原子操作，所以要么全部成功，要么全部失败</p>
+<h2 id="功能-11"><a href="#功能-11" class="headerlink" title="功能"></a>功能</h2><blockquote>
+<p>返回hash表中所有的域和值</p>
 </blockquote>
 <h2 id="返回值-12"><a href="#返回值-12" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>设置成功，返回1<br>设置失败，返回0</p>
+<p>以列表形式返回hash表中的域和域的值<br>如果hash表不存在，则返回一个空的列表</p>
 </blockquote>
-<h2 id="代码演示-12"><a href="#代码演示-12" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; msetnx key11 &quot;value11&quot; key22 &quot;value22&quot;
-(integer) 1
-127.0.0.1:6379&gt; mget key11 key22
-1) &quot;value11&quot;
-2) &quot;value22&quot;
-127.0.0.1:6379&gt; exists key11
-(integer) 1
-127.0.0.1:6379&gt; msetnx key11 &quot;value99&quot; key4 &quot;value77&quot;
+<h2 id="代码演示-13"><a href="#代码演示-13" class="headerlink" title="代码演示"></a>代码演示</h2><pre><code>127.0.0.1:6379&gt; hmset website baidu baidu.com qq qq.com yahoo yahoo.com
+OK
+127.0.0.1:6379&gt; hgetall website
+1) &quot;baidu&quot;
+2) &quot;baidu.com&quot;
+3) &quot;qq&quot;
+4) &quot;qq.com&quot;
+5) &quot;yahoo&quot;
+6) &quot;yahoo.com&quot;
+127.0.0.1:6379&gt; exists website1
 (integer) 0
-127.0.0.1:6379&gt; mget key11 key4
-1) &quot;value11&quot;
-2) (nil)</code></pre>
-<h1 id="MGET"><a href="#MGET" class="headerlink" title="MGET"></a>MGET</h1><h2 id="语法-14"><a href="#语法-14" class="headerlink" title="语法"></a>语法</h2><blockquote>
-<p>MGET key [key …]</p>
-</blockquote>
-<h2 id="功能-14"><a href="#功能-14" class="headerlink" title="功能"></a>功能</h2><blockquote>
-<p>返回给定的一个或多个字符串键的值<br>如果给定的字符串键里面， 有某个键不存在， 那么这个键的值将以特殊值 nil 表示</p>
-</blockquote>
-<h2 id="返回值-13"><a href="#返回值-13" class="headerlink" title="返回值"></a>返回值</h2><blockquote>
-<p>MGET 命令将返回一个列表， 列表中包含了所有给定键的值</p>
-</blockquote>
-<h3 id="代码演示-13"><a href="#代码演示-13" class="headerlink" title="代码演示"></a>代码演示</h3><pre><code>127.0.0.1:6379&gt; set key101 &quot;101&quot;
-OK
-127.0.0.1:6379&gt; set key102 &quot;102&quot;
-OK
-127.0.0.1:6379&gt; mget key101 key102 key103
-1) &quot;101&quot;
-2) &quot;102&quot;
-3) (nil)</code></pre>
+127.0.0.1:6379&gt; hgetall website1
+(empty list or set)</code></pre>
 
             </div>
             <hr/>
@@ -800,7 +662,7 @@ OK
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://example.com/2020/09/23/redis-%E5%AD%97%E7%AC%A6%E4%B8%B2-01/">http://example.com/2020/09/23/redis-%E5%AD%97%E7%AC%A6%E4%B8%B2-01/</a>
+                    <a href="http://example.com/2020/10/15/redis-%E5%93%88%E5%B8%8C%E8%A1%A8-02/">http://example.com/2020/10/15/redis-%E5%93%88%E5%B8%8C%E8%A1%A8-02/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -1007,9 +869,10 @@ OK
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2020/10/15/redis-%E5%93%88%E5%B8%8C%E8%A1%A8-02/">
                     <div class="card-image">
@@ -1027,9 +890,9 @@ OK
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-15
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-15
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -1042,6 +905,7 @@ OK
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -1060,13 +924,13 @@ OK
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/09/04/linux-commands/">
+                <a href="/2020/09/23/redis-%E5%AD%97%E7%AC%A6%E4%B8%B2-01/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="常见linux命令记录">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="redis击杀之路01---字符串">
                         
-                        <span class="card-title">常见linux命令记录</span>
+                        <span class="card-title">redis击杀之路01---字符串</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1077,14 +941,14 @@ OK
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-09-04
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-09-23
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/linux/" class="post-category">
-                                    linux
+                            <a href="/categories/redis/" class="post-category">
+                                    redis
                                 </a>
                             
                             
@@ -1094,8 +958,8 @@ OK
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/linux/">
-                        <span class="chip bg-color">linux</span>
+                    <a href="/tags/redis/">
+                        <span class="chip bg-color">redis</span>
                     </a>
                     
                 </div>
